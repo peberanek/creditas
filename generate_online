@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+#
+# Generate Python client online and get the download URL.
+#
+
+# shellcheck disable=SC2162
+read -p "Set python package version: " py_version
+read -p "Set API version: " api_version
+# JSON requires double quotes; to enable vars, I'm using heredoc
+read -r -d "" config <<EOF
+{
+    "options": {
+        "packageName": "creditas",
+        "packageVersion": "${py_version}"
+    },
+    "swaggerUrl": "https://api.swaggerhub.com/apis/Creditas/OpenAPI/${api_version}"
+}
+EOF
+
+echo "Config: $config"
+
+# https://github.com/swagger-api/swagger-codegen#online-generators
+curl \
+    -H "Content-type: application/json" \
+    -X POST \
+    -d "${config}" \
+    https://generator.swagger.io/api/gen/clients/python
